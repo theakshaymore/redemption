@@ -35,7 +35,7 @@ const registerUser = asyncHandler(async (req, res) => {
   if (
     [fullName, email, username, password].some((field) => field?.trim() === "")
   ) {
-    throw new ApiError(400, "FULLNAME FIELD IS REQUIRED");
+    throw new ApiError(400, "SOME FIELD ARE MISSING");
   }
 
   // SECTION: check if user already exist
@@ -97,7 +97,8 @@ const registerUser = asyncHandler(async (req, res) => {
 
 const loginUser = asyncHandler(async (req, res) => {
   // SECTION: get the data from user
-  const { username, email, password } = req.body();
+  const { username, email, password } = req.body;
+  console.log(username, email, password);
 
   // SECTION: check for empty value
   if (!username || !email) {
@@ -161,14 +162,13 @@ const logoutUser = asyncHandler(async (req, res) => {
     req.user._id,
     {
       $set: {
-        refreshToken : undefined
-      }
-    }
-    ,
+        refreshToken: undefined,
+      },
+    },
     {
-      new: true
+      new: true,
     }
-  )
+  );
 
   const options = {
     httpOnly: true,
@@ -176,10 +176,10 @@ const logoutUser = asyncHandler(async (req, res) => {
   };
 
   return res
-  .status(200)
-  .clearCookie('accessToken', options)
-  .clearCookie('refreshToken', options)
-  .json(new ApiResponse(200, {}, 'User logged out successfully !!'))
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, {}, "User logged out successfully !!"));
 });
 
 export { registerUser, loginUser, logoutUser };
